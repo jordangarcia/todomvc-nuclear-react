@@ -11,7 +11,7 @@ module.exports = React.createClass({
   },
 
   render() {
-    var items = this.props.items.map(item => {
+    var ItemComponents = this.props.items.map(item => {
       return Item({
         item: item
       })
@@ -22,9 +22,10 @@ module.exports = React.createClass({
           id="toggle-all"
           type="checkbox"
           onChange={this._toggleAll}
+          checked={this.props.areAllChecked}
         />
         <ul id="todo-list">
-          {items}
+          {ItemComponents}
         </ul>
       </section>
     )

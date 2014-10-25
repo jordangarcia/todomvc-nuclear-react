@@ -23,6 +23,15 @@ module.exports = Nuclear.createCore({
     this.on(Const.CHECK_ALL_ITEMS, checkAllItems)
     this.on(Const.UNCHECK_ALL_ITEMS, uncheckAllItems)
 
+    this.computed('areAllChecked', Getter({
+      deps: ['items'],
+      compute(items) {
+        return items.every(item => {
+          return item.get('isComplete')
+        })
+      }
+    }))
+
     this.computed('completedItems', Getter({
       deps: ['items'],
       compute(items) {
@@ -81,7 +90,7 @@ function checkAllItems(state) {
   return state.update('items', items => {
     return items.map(item => {
       return item.set('isComplete', true)
-    })
+    }).toMap()
   })
 }
 
@@ -89,6 +98,6 @@ function uncheckAllItems(state) {
   return state.update('items', items => {
     return items.map(item => {
       return item.set('isComplete', false)
-    })
+    }).toMap()
   })
 }

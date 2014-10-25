@@ -18,7 +18,6 @@ module.exports = React.createClass({
   },
 
   _clearCompleted() {
-    debugger
     reactor.action('todo').deleteCompleted()
   },
 

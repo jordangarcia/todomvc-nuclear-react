@@ -13,17 +13,20 @@ module.exports = React.createClass({
 
   getDataBindings() {
     return {
+      'areAllChecked': 'todo.areAllChecked',
       'items': 'filteredTodos',
     }
   },
 
   render() {
-    // dereference immutable objs
-    var items = this.state.items.valueSeq().toJS()
+    // items is immutable at this point, coerce to plain JS Array
+    var items = this.state.items.toJS()
     return (
       <section id="todoapp">
         <Header />
-        <ItemList items={items} />
+        <ItemList
+          items={items}
+          areAllChecked={this.state.areAllChecked} />
         <Footer />
       </section>
     )

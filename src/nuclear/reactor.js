@@ -7,6 +7,6 @@ reactor.attachCore('filter', require('./filter-core'))
 
 reactor.bindActions('todo', require('./todo-actions'))
 
-reactor.computed('filteredTodos', require('./getters/filtered_todos'))
+reactor.computed('filteredTodos', require('./getters/filtered-todos'))
 
 module.exports = reactor
