@@ -6,8 +6,8 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.jsx$/,
-        loader: 'jsx-loader?insertPragma=React.DOM'
+        test: /\.js$/,
+        loader: "jsx-loader"
       },
       {
         test: /\.js$/,
