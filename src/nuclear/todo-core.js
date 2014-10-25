@@ -1,5 +1,6 @@
 var Map = require('immutable').Map
 var Nuclear = require('nuclear-js')
+var Getter = Nuclear.Getter
 var Const = require('./constants')
 var uuid = require('uuid')
 
@@ -18,8 +19,27 @@ module.exports = Nuclear.createCore({
     this.on(Const.ADD_ITEM, addItem)
     this.on(Const.UPDATE_ITEM, updateItem)
     this.on(Const.DELETE_ITEM, deleteItem)
+    this.on(Const.DELETE_COMPLETED, deleteCompleted)
     this.on(Const.CHECK_ALL_ITEMS, checkAllItems)
     this.on(Const.UNCHECK_ALL_ITEMS, uncheckAllItems)
+
+    this.computed('completedItems', Getter({
+      deps: ['items'],
+      compute(items) {
+        return items.valueSeq().filter(item => {
+          return item.get('isComplete')
+        })
+      }
+    }))
+
+    this.computed('activeItems', Getter({
+      deps: ['items'],
+      compute(items) {
+        return items.valueSeq().filter(item => {
+          return !item.get('isComplete')
+        })
+      }
+    }))
   }
 })
 
@@ -31,7 +51,7 @@ function addItem(state, payload) {
   return state.update('items', items => {
     return items.set(id, Map({
       id: id,
-      isChecked: false,
+      isComplete: false,
       title: payload.title
     }))
   })
@@ -49,10 +69,18 @@ function deleteItem(state, payload) {
   })
 }
 
+function deleteCompleted(state) {
+  return state.update('items', items => {
+    return items.filter(item => {
+      return !item.get('isComplete')
+    }).toMap()
+  })
+}
+
 function checkAllItems(state) {
   return state.update('items', items => {
     return items.map(item => {
-      item.set('isChecked', true)
+      return item.set('isComplete', true)
     })
   })
 }
@@ -60,7 +88,7 @@ function checkAllItems(state) {
 function uncheckAllItems(state) {
   return state.update('items', items => {
     return items.map(item => {
-      item.set('isChecked', false)
+      return item.set('isComplete', false)
     })
   })
 }

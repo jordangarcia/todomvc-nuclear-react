@@ -3,7 +3,9 @@ var React = require('react')
 var ReactorMixin = require('nuclear-react-mixin')
 var reactor = require('../nuclear/reactor')
 
-var TodoHeader = require('./todo-header')
+var Header = require('./header')
+var Footer = require('./footer')
+var ItemList = require('./item-list')
 
 module.exports = React.createClass({
 
@@ -11,19 +13,18 @@ module.exports = React.createClass({
 
   getDataBindings() {
     return {
-      'items': 'todo.items',
+      'items': 'filteredTodos',
     }
   },
 
   render() {
-    var body
-    if (this.state.items.length > 0) {
-      //body = ()
-    }
+    // dereference immutable objs
+    var items = this.state.items.valueSeq().toJS()
     return (
       <section id="todoapp">
-        <TodoHeader />
-        {body}
+        <Header />
+        <ItemList items={items} />
+        <Footer />
       </section>
     )
   }

@@ -12,11 +12,17 @@ module.exports = React.createClass({
   },
 
   render() {
+    var input = React.DOM.input({
+      id: 'new-todo',
+      placeholder: "What needs to be done?",
+      autoFocus: true,
+      autoComplete: 'off'
+    })
     return (
       <header id="header">
         <h1>todos</h1>
         <form onSubmit={this._addItem}>
-          <input id="new-todo" placeholder="What needs to be done?" autofocus />
+          {input}
         </form>
       </header>
     )
