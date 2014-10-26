@@ -47,12 +47,21 @@
   \*********************/
 /***/ function(module, exports, __webpack_require__) {
 
+	var Immutable = __webpack_require__(/*! immutable */ 18)
 	var React = __webpack_require__(/*! react */ 3)
 	var reactor = __webpack_require__(/*! ./nuclear/reactor */ 1)
 	var TodoApp = __webpack_require__(/*! ./ui/main */ 2)
 	
-	reactor.initialize()
+	var stateToLoad = window.localStorage.getItem('todomvc')
+	if (stateToLoad) {
+	  reactor.initialize(Immutable.fromJS(JSON.parse(stateToLoad)))
+	} else {
+	  reactor.initialize()
+	}
 	
+	reactor.changeEmitter.addChangeListener(function(state)  {
+	  window.localStorage.setItem('todomvc', JSON.stringify(state.toJS()))
+	})
 	React.renderComponent(TodoApp(), document.getElementById('app'))
 
 
