@@ -75,12 +75,14 @@
 	  reactor.initialize()
 	}
 	
-	window.location.hash = getLocationHash.evaluate(reactor.state)
-	
+	// whenever the hash parse it and update app state
 	window.addEventListener('hashchange', function(e)  {
 	  reactor.action('todo').parseHash(window.location.hash)
-	
 	})
+	
+	// always derive the filter state from URL
+	// this will override any persisted filter state
+	reactor.action('todo').parseHash(window.location.hash)
 	
 	React.renderComponent(TodoApp(), document.getElementById('app'))
 
@@ -4058,6 +4060,11 @@
 
 	var Const = __webpack_require__(/*! ./constants */ 13)
 	
+	var VALID_FILTERS = ['all', 'completed', 'active']
+	
+	var DEFAULT_FILTER = 'all'
+	
+	
 	/**
 	 * adds a new todo item
 	 */
@@ -4093,9 +4100,29 @@
 	}
 	
 	exports.filter = function(reactor, val) {
+	  if (VALID_FILTERS.indexOf(val) === -1) {
+	    console.warn('invalid filter', val)
+	    val = DEFAULT_FILTER
+	  }
 	  reactor.dispatch(Const.SET_COMPLETED_FILTER, {
 	    value: val
 	  })
+	}
+	
+	/**
+	 * Parses the window location hash and sets the necessary
+	 * app state
+	 */
+	exports.parseHash = function(reactor, hash) {
+	  var matches = hash.match(/\/(\w+)/)
+	
+	  if (matches) {
+	    if (reactor.get('filter.value') !== matches[1]) {
+	      exports.filter(reactor, matches[1])
+	    }
+	  } else {
+	    exports.filter(reactor, DEFAULT_FILTER)
+	  }
 	}
 
 
@@ -32480,6 +32507,9 @@
 	module.exports = Getter({
 	  deps: ['filter.value'],
 	  compute:function(filterValue) {
+	    if (filterValue === 'all') {
+	      return '/'
+	    }
 	    return '/' + filterValue
 	  }
 	})

@@ -1,5 +1,10 @@
 var Const = require('./constants')
 
+var VALID_FILTERS = ['all', 'completed', 'active']
+
+var DEFAULT_FILTER = 'all'
+
+
 /**
  * adds a new todo item
  */
@@ -35,7 +40,27 @@ exports.toggleAll = function(reactor, val) {
 }
 
 exports.filter = function(reactor, val) {
+  if (VALID_FILTERS.indexOf(val) === -1) {
+    console.warn('invalid filter', val)
+    val = DEFAULT_FILTER
+  }
   reactor.dispatch(Const.SET_COMPLETED_FILTER, {
     value: val
   })
+}
+
+/**
+ * Parses the window location hash and sets the necessary
+ * app state
+ */
+exports.parseHash = function(reactor, hash) {
+  var matches = hash.match(/\/(\w+)/)
+
+  if (matches) {
+    if (reactor.get('filter.value') !== matches[1]) {
+      exports.filter(reactor, matches[1])
+    }
+  } else {
+    exports.filter(reactor, DEFAULT_FILTER)
+  }
 }
