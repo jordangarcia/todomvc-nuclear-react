@@ -11,7 +11,7 @@ module.exports = React.createClass({
   /**
    * Set the filter value (all|active|completed)
    */
-  _filter(val) {
+  filter(val) {
     reactor.action('todo').filter(val)
   },
 
@@ -24,7 +24,7 @@ module.exports = React.createClass({
           <a
             href="javascript:void(0)"
             className={value === 'all' ? 'selected' : ''}
-            onClick={this._filter.bind(this, 'all')}
+            onClick={this.filter.bind(this, 'all')}
           >
             All
           </a>
@@ -33,7 +33,7 @@ module.exports = React.createClass({
           <a
             href="javascript:void(0)"
             className={value === 'active' ? 'selected' : ''}
-            onClick={this._filter.bind(this, 'active')}
+            onClick={this.filter.bind(this, 'active')}
           >
             Active
           </a>
@@ -42,7 +42,7 @@ module.exports = React.createClass({
           <a
             href="javascript:void(0)"
             className={value === 'completed' ? 'selected' : ''}
-            onClick={this._filter.bind(this, 'completed')}
+            onClick={this.filter.bind(this, 'completed')}
           >
             Completed
           </a>

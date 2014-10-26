@@ -4,7 +4,7 @@ var reactor = require('../nuclear/reactor')
 
 module.exports = React.createClass({
 
-  _addItem(e) {
+  addItem(e) {
     e.preventDefault()
     var input = e.target.querySelector('input')
     reactor.action('todo').addItem(input.value)
@@ -21,7 +21,7 @@ module.exports = React.createClass({
     return (
       <header id="header">
         <h1>todos</h1>
-        <form onSubmit={this._addItem}>
+        <form onSubmit={this.addItem}>
           {input}
         </form>
       </header>

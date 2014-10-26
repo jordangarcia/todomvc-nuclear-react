@@ -9,14 +9,14 @@ module.exports = React.createClass({
   /**
    * Removes the current item
    */
-  _delete() {
+  delete() {
     reactor.action('todo').deleteItem(this.props.item)
   },
 
   /**
    * Toggles the item's isComplete attribute
    */
-  _toggleComplete() {
+  toggleComplete() {
     reactor.action('todo').toggleItem(this.props.item)
   },
 
@@ -28,7 +28,7 @@ module.exports = React.createClass({
       type: 'checkbox',
       className: 'toggle',
       checked: item.isComplete,
-      onChange: this._toggleComplete
+      onChange: this.toggleComplete
     })
 
     return (
@@ -36,7 +36,7 @@ module.exports = React.createClass({
         <div className="view">
           {checkbox}
           <label>{item.title}</label>
-          <button className="destroy" onClick={this._delete} />
+          <button className="destroy" onClick={this.delete} />
         </div>
       </li>
     )

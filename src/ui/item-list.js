@@ -12,7 +12,7 @@ module.exports = React.createClass({
   /**
    * Checks or unchecks all items
    */
-  _toggleAll(event) {
+  toggleAll(event) {
     reactor.action('todo').toggleAll(event.target.checked)
   },
 
@@ -28,7 +28,7 @@ module.exports = React.createClass({
         <input
           id="toggle-all"
           type="checkbox"
-          onChange={this._toggleAll}
+          onChange={this.toggleAll}
           checked={this.props.areAllChecked}
         />
         <ul id="todo-list">

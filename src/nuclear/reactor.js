@@ -15,11 +15,12 @@ var Nuclear = require('nuclear-js')
 
 var reactor = Nuclear.createReactor()
 
-reactor.attachCore('todo', require('./todo-core'))
+reactor.attachCore('items', require('./items-core'))
 reactor.attachCore('filter', require('./filter-core'))
 
 reactor.bindActions('todo', require('./todo-actions'))
 
-reactor.computed('filteredTodos', require('./getters/filtered-todos'))
+reactor.computed('filteredItems', require('./getters/filtered-todos'))
+reactor.computed('locationHash', require('./getters/location-hash'))
 
 module.exports = reactor

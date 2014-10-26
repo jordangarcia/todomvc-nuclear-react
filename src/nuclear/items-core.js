@@ -1,3 +1,5 @@
+"use strict";
+
 var Immutable = require('immutable')
 var Map = Immutable.Map
 var OrderedMap = Immutable.OrderedMap
@@ -15,9 +17,9 @@ module.exports = Nuclear.createCore({
    * Define the initial state of the 'todo' core of the app state
    */
   getInitialState() {
-    return Map({
-      items: OrderedMap()
-    })
+    return {
+      all: [],
+    }
   },
 
   /**
@@ -34,7 +36,7 @@ module.exports = Nuclear.createCore({
     // Define computeds to make the state more consumable
 
     this.computed('areAllChecked', Getter({
-      deps: ['items'],
+      deps: ['all'],
       compute(items) {
         return items.every(item => {
           return item.get('isComplete')
@@ -45,24 +47,24 @@ module.exports = Nuclear.createCore({
     /**
      * Returns a vector (array) of completed todo items
      */
-    this.computed('completedItems', Getter({
-      deps: ['items'],
+    this.computed('completed', Getter({
+      deps: ['all'],
       compute(items) {
         return items.filter(item => {
           return item.get('isComplete')
-        }).toVector()
+        })
       }
     }))
 
     /**
      * Returns a vector (array) of active todo items
      */
-    this.computed('activeItems', Getter({
-      deps: ['items'],
+    this.computed('active', Getter({
+      deps: ['all'],
       compute(items) {
         return items.filter(item => {
           return !item.get('isComplete')
-        }).toVector()
+        })
       }
     }))
   }
@@ -73,8 +75,8 @@ module.exports = Nuclear.createCore({
  */
 function addItem(state, payload) {
   var id = uuid()
-  return state.update('items', items => {
-    return items.set(id, Map({
+  return state.update('all', items => {
+    return items.push(Map({
       id: id,
       isComplete: false,
       title: payload.title
@@ -86,7 +88,8 @@ function addItem(state, payload) {
  * Merges the payload with an existing todo item
  */
 function updateItem(state, payload) {
-  return state.updateIn(['items', payload.id], item => {
+  var ind = itemIndex(state, payload.id)
+  return state.updateIn(['all', ind], item => {
     return item.merge(payload)
   })
 }
@@ -95,8 +98,9 @@ function updateItem(state, payload) {
  * Deletes an item by id
  */
 function deleteItem(state, payload) {
-  return state.update('items', items => {
-    return items.delete(payload.id)
+  var ind = itemIndex(state, payload.id)
+  return state.remove('all', items => {
+    return items.delete(ind)
   })
 }
 
@@ -104,10 +108,10 @@ function deleteItem(state, payload) {
  * Deletes all completed items
  */
 function deleteCompleted(state) {
-  return state.update('items', items => {
+  return state.update('all', items => {
     return items.filter(item => {
       return !item.get('isComplete')
-    }).toMap()
+    })
   })
 }
 
@@ -115,22 +119,33 @@ function deleteCompleted(state) {
  * Marks all items as complete
  */
 function checkAllItems(state) {
-  var items = state.get('items').withMutations(items => {
-    items.forEach((item, key) => {
-      items.set(key, item.set('isComplete', true))
-    })
-    return items
+  return state.update('all', items => {
+    return items.map(item => {
+      return item.set('isComplete', true)
+    }).toVector()
   })
-  return state.set('items', items)
 }
 
 /**
  * Mark all items as not complete
  */
 function uncheckAllItems(state) {
-  return state.update('items', items => {
+  return state.update('all', items => {
     return items.map(item => {
       return item.set('isComplete', false)
-    }).toOrderedMap()
+    }).toVector()
   })
+}
+
+/**
+ * Gets the index of an item matching the id
+ */
+function itemIndex(state, id) {
+  var ind = state.get('all').findIndex(item => {
+    return item.get('id') === id
+  })
+  if (ind === -1) {
+    throw new Error("Cannot find item by id=" + id)
+  }
+  return ind
 }

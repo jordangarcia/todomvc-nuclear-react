@@ -18,28 +18,39 @@ module.exports = React.createClass({
   mixins: [ReactorMixin(reactor)],
 
   /**
-   * Returns a map of state values that should be synced
-   * with keyPaths on the app state singleton (reactor)
+   * Declare all state data that should be kept in sync whenever
+   * the app state changes from the reactor
+   *
+   * Returns a map of state properties to reactor keyPaths
    */
   getDataBindings() {
     return {
-      'areAllChecked': 'todo.areAllChecked',
-      'items': 'filteredTodos',
+      'items': 'filteredItems',
+      'active': 'items.active',
+      'filterValue': 'filter.value',
+      'areAllChecked': 'items.areAllChecked',
     }
   },
 
   render() {
     // items is immutable at this point, coerce to plain JS Array
     var items = this.state.items.toJS()
+    var numActive = this.state.items.toJS().length
+    var numCompleted = items.length - numActive
+
     return (
       <section id="todoapp">
         <Header />
         <ItemList
           items={items}
-          areAllChecked={this.state.areAllChecked} />
-        <Footer />
+          areAllChecked={this.state.areAllChecked}
+        />
+        <Footer 
+          numActive={numActive}
+          numCompleted={numCompleted}
+          filterValue={this.state.filterValue}
+        />
       </section>
     )
   }
-
 })

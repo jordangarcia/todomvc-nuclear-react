@@ -1,25 +1,18 @@
 var Getter = require('nuclear-js').Getter
 
-var filterFns = {
-  'completed': function(item) {
-    return item.get('isComplete')
-  },
-  'active': function(item) {
-    return !item.get('isComplete')
-  },
-}
+var VALID_FILTERS = ['all', 'completed', 'active']
+
 
 /**
  * Returns a Vector of filtered items based on the current
  * filter.value
  */
 module.exports = Getter({
-  deps: ['todo.items', 'filter.value'],
+  deps: ['items', 'filter.value'],
   compute(items, filterValue) {
-    if (filterValue === 'all') {
-      return items.toVector()
+    if (VALID_FILTERS.indexOf(filterValue) === -1) {
+      throw new Error("Invalid filter " + filterValue)
     }
-    var filterFn = filterFns[filterValue]
-    return items.filter(filterFn).toVector()
+    return items.get(filterValue)
   }
 })
