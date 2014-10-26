@@ -1,18 +1,25 @@
 /** @jsx React.DOM */
 var React = require('react')
 var Item = require('./item')
-
 var reactor = require('../nuclear/reactor')
 
+/**
+ * Item List comonponent, is passed in a plain javascript array
+ * of items as props.
+ */
 module.exports = React.createClass({
 
-  _toggleAll(e) {
-    reactor.action('todo').toggleAll(e.target.checked)
+  /**
+   * Checks or unchecks all items
+   */
+  _toggleAll(event) {
+    reactor.action('todo').toggleAll(event.target.checked)
   },
 
   render() {
     var ItemComponents = this.props.items.map(item => {
       return Item({
+        key: item.id,
         item: item
       })
     })

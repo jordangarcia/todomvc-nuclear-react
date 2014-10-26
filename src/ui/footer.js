@@ -2,9 +2,12 @@
 var React = require('react')
 var ReactorMixin = require('nuclear-react-mixin')
 var reactor = require('../nuclear/reactor')
-
 var Filters = require('./filters')
 
+/**
+ * Footer component, recieves the completedItems
+ * activeItems and the filter value from the reactor
+ */
 module.exports = React.createClass({
 
   mixins: [ReactorMixin(reactor)],
@@ -17,11 +20,16 @@ module.exports = React.createClass({
     }
   },
 
+  /**
+   * Removes all completed items
+   */
   _clearCompleted() {
     reactor.action('todo').deleteCompleted()
   },
 
   render() {
+    // coerce these to JS arrays to parse the length
+    // since Immutable sequences are lazy
     var numActive = this.state.active.toJS().length
     var numCompleted = this.state.completed.toJS().length
 
@@ -37,5 +45,4 @@ module.exports = React.createClass({
       </footer>
     )
   }
-
 })

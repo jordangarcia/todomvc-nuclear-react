@@ -2,12 +2,21 @@
 var React = require('react')
 var reactor = require('../nuclear/reactor')
 
+/**
+ * A single todo item
+ */
 module.exports = React.createClass({
-  _delete(e) {
+  /**
+   * Removes the current item
+   */
+  _delete() {
     reactor.action('todo').deleteItem(this.props.item)
   },
 
-  _change(e) {
+  /**
+   * Toggles the item's isComplete attribute
+   */
+  _toggleComplete() {
     reactor.action('todo').toggleItem(this.props.item)
   },
 
@@ -19,7 +28,7 @@ module.exports = React.createClass({
       type: 'checkbox',
       className: 'toggle',
       checked: item.isComplete,
-      onChange: this._change
+      onChange: this._toggleComplete
     })
 
     return (

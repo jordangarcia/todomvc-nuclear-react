@@ -52,16 +52,21 @@
 	var reactor = __webpack_require__(/*! ./nuclear/reactor */ 1)
 	var TodoApp = __webpack_require__(/*! ./ui/main */ 2)
 	
+	// check localStorage if there is data to load
 	var stateToLoad = window.localStorage.getItem('todomvc')
 	if (stateToLoad) {
+	  // initialize with the Immutable representation of localStorage state
+	  // TODO: implmement transit-js to get items to be in a OrderedMap
 	  reactor.initialize(Immutable.fromJS(JSON.parse(stateToLoad)))
 	} else {
 	  reactor.initialize()
 	}
 	
+	// whenever the app state changes, write to localStorage
 	reactor.changeEmitter.addChangeListener(function(state)  {
 	  window.localStorage.setItem('todomvc', JSON.stringify(state.toJS()))
 	})
+	
 	React.renderComponent(TodoApp(), document.getElementById('app'))
 
 
@@ -72,6 +77,19 @@
   \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * The reactor singleton file
+	 *
+	 * Creates a reactor and registers cores/actions/computeds
+	 *
+	 * Cores determine the initial state and behavior of the app
+	 *
+	 * Actions can be invoked by calling reactor.action('todo').METHODNAME()
+	 *
+	 * Computeds define additional *computed* state on the system, these values
+	 * always stay up to date and are evaluated only whenever their underlying
+	 * dependencies change
+	 */
 	var Nuclear = __webpack_require__(/*! nuclear-js */ 14)
 	
 	var reactor = Nuclear.createReactor()
@@ -97,15 +115,25 @@
 	var React = __webpack_require__(/*! react */ 3)
 	var ReactorMixin = __webpack_require__(/*! nuclear-react-mixin */ 16)
 	var reactor = __webpack_require__(/*! ../nuclear/reactor */ 1)
-	
 	var Header = __webpack_require__(/*! ./header */ 4)
 	var Footer = __webpack_require__(/*! ./footer */ 5)
 	var ItemList = __webpack_require__(/*! ./item-list */ 6)
 	
+	/**
+	 * Root component
+	 */
 	module.exports = React.createClass({displayName: 'exports',
 	
+	  /**
+	   * ReactorMixin provides automatic data syncing/rendering
+	   * whenever the app state changes (through the reactor)
+	   */
 	  mixins: [ReactorMixin(reactor)],
 	
+	  /**
+	   * Returns a map of state values that should be synced
+	   * with keyPaths on the app state singleton (reactor)
+	   */
 	  getDataBindings:function() {
 	    return {
 	      'areAllChecked': 'todo.areAllChecked',
@@ -190,9 +218,12 @@
 	var React = __webpack_require__(/*! react */ 3)
 	var ReactorMixin = __webpack_require__(/*! nuclear-react-mixin */ 16)
 	var reactor = __webpack_require__(/*! ../nuclear/reactor */ 1)
-	
 	var Filters = __webpack_require__(/*! ./filters */ 12)
 	
+	/**
+	 * Footer component, recieves the completedItems
+	 * activeItems and the filter value from the reactor
+	 */
 	module.exports = React.createClass({displayName: 'exports',
 	
 	  mixins: [ReactorMixin(reactor)],
@@ -205,11 +236,16 @@
 	    }
 	  },
 	
+	  /**
+	   * Removes all completed items
+	   */
 	  _clearCompleted:function() {
 	    reactor.action('todo').deleteCompleted()
 	  },
 	
 	  render:function() {
+	    // coerce these to JS arrays to parse the length
+	    // since Immutable sequences are lazy
 	    var numActive = this.state.active.toJS().length
 	    var numCompleted = this.state.completed.toJS().length
 	
@@ -225,7 +261,6 @@
 	      )
 	    )
 	  }
-	
 	})
 
 
@@ -239,18 +274,25 @@
 	/** @jsx React.DOM */
 	var React = __webpack_require__(/*! react */ 3)
 	var Item = __webpack_require__(/*! ./item */ 13)
-	
 	var reactor = __webpack_require__(/*! ../nuclear/reactor */ 1)
 	
+	/**
+	 * Item List comonponent, is passed in a plain javascript array
+	 * of items as props.
+	 */
 	module.exports = React.createClass({displayName: 'exports',
 	
-	  _toggleAll:function(e) {
-	    reactor.action('todo').toggleAll(e.target.checked)
+	  /**
+	   * Checks or unchecks all items
+	   */
+	  _toggleAll:function(event) {
+	    reactor.action('todo').toggleAll(event.target.checked)
 	  },
 	
 	  render:function() {
 	    var ItemComponents = this.props.items.map(function(item)  {
 	      return Item({
+	        key: item.id,
 	        item: item
 	      })
 	    })
@@ -278,7 +320,9 @@
   \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var Map = __webpack_require__(/*! immutable */ 18).Map
+	var Immutable = __webpack_require__(/*! immutable */ 18)
+	var Map = Immutable.Map
+	var OrderedMap = Immutable.OrderedMap
 	var Nuclear = __webpack_require__(/*! nuclear-js */ 14)
 	var Getter = Nuclear.Getter
 	var Const = __webpack_require__(/*! ./constants */ 15)
@@ -289,12 +333,18 @@
 	 * of all todo model state
 	 */
 	module.exports = Nuclear.createCore({
+	  /**
+	   * Define the initial state of the 'todo' core of the app state
+	   */
 	  getInitialState:function() {
-	    return {
-	      items: {}
-	    }
+	    return Map({
+	      items: OrderedMap()
+	    })
 	  },
 	
+	  /**
+	   * Setup all the message handlers
+	   */
 	  initialize:function() {
 	    this.on(Const.ADD_ITEM, addItem)
 	    this.on(Const.UPDATE_ITEM, updateItem)
@@ -302,6 +352,8 @@
 	    this.on(Const.DELETE_COMPLETED, deleteCompleted)
 	    this.on(Const.CHECK_ALL_ITEMS, checkAllItems)
 	    this.on(Const.UNCHECK_ALL_ITEMS, uncheckAllItems)
+	
+	    // Define computeds to make the state more consumable
 	
 	    this.computed('areAllChecked', Getter({
 	      deps: ['items'],
@@ -312,21 +364,27 @@
 	      }
 	    }))
 	
+	    /**
+	     * Returns a vector (array) of completed todo items
+	     */
 	    this.computed('completedItems', Getter({
 	      deps: ['items'],
 	      compute:function(items) {
-	        return items.valueSeq().filter(function(item)  {
+	        return items.filter(function(item)  {
 	          return item.get('isComplete')
-	        })
+	        }).toVector()
 	      }
 	    }))
 	
+	    /**
+	     * Returns a vector (array) of active todo items
+	     */
 	    this.computed('activeItems', Getter({
 	      deps: ['items'],
 	      compute:function(items) {
-	        return items.valueSeq().filter(function(item)  {
+	        return items.filter(function(item)  {
 	          return !item.get('isComplete')
-	        })
+	        }).toVector()
 	      }
 	    }))
 	  }
@@ -346,18 +404,27 @@
 	  })
 	}
 	
+	/**
+	 * Merges the payload with an existing todo item
+	 */
 	function updateItem(state, payload) {
 	  return state.updateIn(['items', payload.id], function(item)  {
 	    return item.merge(payload)
 	  })
 	}
 	
+	/**
+	 * Deletes an item by id
+	 */
 	function deleteItem(state, payload) {
 	  return state.update('items', function(items)  {
 	    return items.delete(payload.id)
 	  })
 	}
 	
+	/**
+	 * Deletes all completed items
+	 */
 	function deleteCompleted(state) {
 	  return state.update('items', function(items)  {
 	    return items.filter(function(item)  {
@@ -366,19 +433,27 @@
 	  })
 	}
 	
+	/**
+	 * Marks all items as complete
+	 */
 	function checkAllItems(state) {
-	  return state.update('items', function(items)  {
-	    return items.map(function(item)  {
-	      return item.set('isComplete', true)
-	    }).toMap()
+	  var items = state.get('items').withMutations(function(items)  {
+	    items.forEach(function(item, key)  {
+	      items.set(key, item.set('isComplete', true))
+	    })
+	    return items
 	  })
+	  return state.set('items', items)
 	}
 	
+	/**
+	 * Mark all items as not complete
+	 */
 	function uncheckAllItems(state) {
 	  return state.update('items', function(items)  {
 	    return items.map(function(item)  {
 	      return item.set('isComplete', false)
-	    }).toMap()
+	    }).toOrderedMap()
 	  })
 	}
 
@@ -669,8 +744,15 @@
 	var React = __webpack_require__(/*! react */ 3)
 	var reactor = __webpack_require__(/*! ../nuclear/reactor */ 1)
 	
+	/**
+	 * Filter controls for showing all/active/completed
+	 * items
+	 */
 	module.exports = React.createClass({displayName: 'exports',
 	
+	  /**
+	   * Set the filter value (all|active|completed)
+	   */
 	  _filter:function(val) {
 	    reactor.action('todo').filter(val)
 	  },
@@ -724,12 +806,21 @@
 	var React = __webpack_require__(/*! react */ 3)
 	var reactor = __webpack_require__(/*! ../nuclear/reactor */ 1)
 	
+	/**
+	 * A single todo item
+	 */
 	module.exports = React.createClass({displayName: 'exports',
-	  _delete:function(e) {
+	  /**
+	   * Removes the current item
+	   */
+	  _delete:function() {
 	    reactor.action('todo').deleteItem(this.props.item)
 	  },
 	
-	  _change:function(e) {
+	  /**
+	   * Toggles the item's isComplete attribute
+	   */
+	  _toggleComplete:function() {
 	    reactor.action('todo').toggleItem(this.props.item)
 	  },
 	
@@ -741,7 +832,7 @@
 	      type: 'checkbox',
 	      className: 'toggle',
 	      checked: item.isComplete,
-	      onChange: this._change
+	      onChange: this._toggleComplete
 	    })
 	
 	    return (
