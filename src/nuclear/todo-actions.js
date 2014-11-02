@@ -31,6 +31,23 @@ exports.toggleItem = function(reactor, item) {
   })
 }
 
+exports.updateItemTitle = function(reactor, id, newTitle) {
+  reactor.dispatch(Const.UPDATE_ITEM, {
+    id: id,
+    title: newTitle
+  })
+}
+
+exports.setEditingItem = function(reactor, item) {
+  reactor.dispatch(Const.SET_EDITING_ITEM, {
+    id: item.id,
+  })
+}
+
+exports.clearEditingItem = function(reactor) {
+  reactor.dispatch(Const.CLEAR_EDITING_ITEM)
+}
+
 exports.toggleAll = function(reactor, val) {
   if (val) {
     reactor.dispatch(Const.CHECK_ALL_ITEMS)

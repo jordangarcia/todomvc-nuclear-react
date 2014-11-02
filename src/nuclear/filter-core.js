@@ -6,9 +6,7 @@ var Const = require('./constants')
  */
 module.exports = Nuclear.createCore({
   getInitialState() {
-    return {
-      value: 'all'
-    }
+    return 'all'
   },
 
   initialize() {
@@ -17,5 +15,5 @@ module.exports = Nuclear.createCore({
 })
 
 function setFilter(state, payload) {
-  return state.set('value', payload.value)
+  return payload.value
 }

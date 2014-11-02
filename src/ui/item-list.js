@@ -17,10 +17,13 @@ module.exports = React.createClass({
   },
 
   render() {
+    console.log('editing id', this.props.editingId)
     var ItemComponents = this.props.items.map(item => {
+      console.log('is editing', item.id === this.props.editingId)
       return Item({
         key: item.id,
-        item: item
+        item: item,
+        isEditing: (item.id === this.props.editingId)
       })
     })
     return (

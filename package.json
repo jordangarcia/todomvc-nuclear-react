@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "react": "^0.11.2",
-    "nuclear-js": "^0.4.0-rc3",
+    "nuclear-js": "^0.4.0-rc4",
     "immutable": "^2.5.1",
     "nuclear-react-mixin": "^2.0.0",
     "lodash": "^2.4.1",

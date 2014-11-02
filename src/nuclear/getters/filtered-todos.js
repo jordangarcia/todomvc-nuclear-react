@@ -8,11 +8,11 @@ var VALID_FILTERS = ['all', 'completed', 'active']
  * filter.value
  */
 module.exports = Getter({
-  deps: ['items', 'filter.value'],
-  compute(items, filterValue) {
-    if (VALID_FILTERS.indexOf(filterValue) === -1) {
-      throw new Error("Invalid filter " + filterValue)
+  deps: ['items', 'filter'],
+  compute(items, filter) {
+    if (VALID_FILTERS.indexOf(filter) === -1) {
+      throw new Error("Invalid filter " + filter)
     }
-    return items.get(filterValue)
+    return items.get(filter)
   }
 })

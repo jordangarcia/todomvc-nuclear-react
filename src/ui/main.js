@@ -27,8 +27,9 @@ module.exports = React.createClass({
     return {
       'items': 'filteredItems',
       'active': 'items.active',
-      'filterValue': 'filter.value',
+      'filterValue': 'filter',
       'areAllChecked': 'items.areAllChecked',
+      'editingId': 'editingId',
     }
   },
 
@@ -43,6 +44,7 @@ module.exports = React.createClass({
         <Header />
         <ItemList
           items={items}
+          editingId={this.state.editingId}
           areAllChecked={this.state.areAllChecked}
         />
         <Footer 
