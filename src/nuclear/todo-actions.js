@@ -74,10 +74,6 @@ exports.parseHash = function(reactor, hash) {
   var matches = hash.match(/\/(\w+)/)
 
   if (matches) {
-    if (reactor.get('filter.value') !== matches[1]) {
-      exports.filter(reactor, matches[1])
-    }
-  } else {
-    exports.filter(reactor, DEFAULT_FILTER)
+    exports.filter(reactor, matches[1])
   }
 }

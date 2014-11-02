@@ -48,7 +48,6 @@
 	var React = __webpack_require__(4)
 	var reactor = __webpack_require__(1)
 	var TodoApp = __webpack_require__(2)
-	var getLocationHash = __webpack_require__(3)
 
 	// whenever the app state changes, write to localStorage
 	reactor.changeEmitter.addChangeListener(function(state)  {
@@ -65,9 +64,13 @@
 	  reactor.initialize()
 	}
 
-	// always derive the filter state from URL
-	// this will override any persisted filter state
-	reactor.action('todo').parseHash(window.location.hash)
+	// add hashchange listener
+	window.addEventListener('hashchange', function(e)  {
+	  reactor.action('todo').parseHash(window.location.hash)
+	})
+
+	// ensure a valid hash when loading the page
+	window.location.hash = reactor.get('locationHash')
 
 	React.renderComponent(TodoApp(), document.getElementById('app'))
 
@@ -180,7 +183,7 @@
 	var Getter = __webpack_require__(16).Getter
 
 	module.exports = Getter({
-	  deps: ['filter.value'],
+	  deps: ['filter'],
 	  compute:function(filterValue) {
 	    if (filterValue === 'all') {
 	      return '/'
@@ -4045,11 +4048,7 @@
 	  var matches = hash.match(/\/(\w+)/)
 
 	  if (matches) {
-	    if (reactor.get('filter.value') !== matches[1]) {
-	      exports.filter(reactor, matches[1])
-	    }
-	  } else {
-	    exports.filter(reactor, DEFAULT_FILTER)
+	    exports.filter(reactor, matches[1])
 	  }
 	}
 
@@ -4373,7 +4372,7 @@
 	          React.DOM.a({
 	            href: "javascript:void(0)", 
 	            className: value === 'all' ? 'selected' : '', 
-	            onClick: this.filter.bind(this, 'all')
+	            href: "#/all"
 	          }, 
 	            "All"
 	          )
@@ -4382,7 +4381,7 @@
 	          React.DOM.a({
 	            href: "javascript:void(0)", 
 	            className: value === 'active' ? 'selected' : '', 
-	            onClick: this.filter.bind(this, 'active')
+	            href: "#/active"
 	          }, 
 	            "Active"
 	          )
@@ -4391,7 +4390,7 @@
 	          React.DOM.a({
 	            href: "javascript:void(0)", 
 	            className: value === 'completed' ? 'selected' : '', 
-	            onClick: this.filter.bind(this, 'completed')
+	            href: "#/completed"
 	          }, 
 	            "Completed"
 	          )

@@ -2,7 +2,6 @@ var Immutable = require('immutable')
 var React = require('react')
 var reactor = require('./nuclear/reactor')
 var TodoApp = require('./ui/main')
-var getLocationHash = require('./nuclear/getters/location-hash')
 
 // whenever the app state changes, write to localStorage
 reactor.changeEmitter.addChangeListener(state => {
@@ -19,8 +18,12 @@ if (stateToLoad) {
   reactor.initialize()
 }
 
-// always derive the filter state from URL
-// this will override any persisted filter state
-reactor.action('todo').parseHash(window.location.hash)
+// add hashchange listener
+window.addEventListener('hashchange', (e) => {
+  reactor.action('todo').parseHash(window.location.hash)
+})
+
+// ensure a valid hash when loading the page
+window.location.hash = reactor.get('locationHash')
 
 React.renderComponent(TodoApp(), document.getElementById('app'))

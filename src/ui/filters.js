@@ -24,7 +24,7 @@ module.exports = React.createClass({
           <a
             href="javascript:void(0)"
             className={value === 'all' ? 'selected' : ''}
-            onClick={this.filter.bind(this, 'all')}
+            href="#/all"
           >
             All
           </a>
@@ -33,7 +33,7 @@ module.exports = React.createClass({
           <a
             href="javascript:void(0)"
             className={value === 'active' ? 'selected' : ''}
-            onClick={this.filter.bind(this, 'active')}
+            href="#/active"
           >
             Active
           </a>
@@ -42,7 +42,7 @@ module.exports = React.createClass({
           <a
             href="javascript:void(0)"
             className={value === 'completed' ? 'selected' : ''}
-            onClick={this.filter.bind(this, 'completed')}
+            href="#/completed"
           >
             Completed
           </a>

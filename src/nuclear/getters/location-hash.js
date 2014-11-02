@@ -5,7 +5,7 @@
 var Getter = require('nuclear-js').Getter
 
 module.exports = Getter({
-  deps: ['filter.value'],
+  deps: ['filter'],
   compute(filterValue) {
     if (filterValue === 'all') {
       return '/'
