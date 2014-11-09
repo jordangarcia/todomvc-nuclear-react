@@ -13,13 +13,11 @@ module.exports = React.createClass({
    * Checks or unchecks all items
    */
   toggleAll(event) {
-    reactor.action('todo').toggleAll(event.target.checked)
+    reactor.actions('todo').toggleAll(event.target.checked)
   },
 
   render() {
-    console.log('editing id', this.props.editingId)
     var ItemComponents = this.props.items.map(item => {
-      console.log('is editing', item.id === this.props.editingId)
       return Item({
         key: item.id,
         item: item,

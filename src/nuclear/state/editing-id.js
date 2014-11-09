@@ -1,10 +1,10 @@
 var Nuclear = require('nuclear-js')
-var Const = require('./constants')
+var Const = require('../constants')
 
 /**
  * State which item is being edited
  */
-module.exports = Nuclear.createCore({
+module.exports = Nuclear.ReactiveState({
   getInitialState() {
     return null
   },
@@ -19,6 +19,7 @@ function clearEditingItem(state)  {
   return null
 }
 
-function setEditing(state, payload) {
+function setEditing(state, id) {
+  return id
   return payload.id
 }

@@ -13,15 +13,21 @@
  */
 var Nuclear = require('nuclear-js')
 
-var reactor = Nuclear.createReactor()
+module.exports = Nuclear.Reactor({
+  state: {
+    items: require('./state/items'),
+    filter: require('./state/filter-value'),
+    editingId: require('./state/editing-id'),
 
-reactor.defineState('items', require('./items-core'))
-reactor.defineState('editingId', require('./editing-core'))
-reactor.defineState('filter', require('./filter-core'))
+    // computed state
+    activeItems: require('./computeds/active-items'),
+    completedItems: require('./computeds/completed-items'),
+    filteredItems: require('./computeds/filtered-items'),
+    areAllChecked: require('./computeds/are-all-items-checked'),
+    locationHash: require('./computeds/location-hash'),
+  },
 
-reactor.defineComputed('filteredItems', require('./getters/filtered-todos'))
-reactor.defineComputed('locationHash', require('./getters/location-hash'))
-
-reactor.bindActions('todo', require('./todo-actions'))
-
-module.exports = reactor
+  actions: {
+    todo: require('./todo-actions')
+  }
+})

@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "react": "^0.11.2",
-    "nuclear-js": "^0.4.0-rc4",
-    "immutable": "^2.5.1",
+    "nuclear-js": "^0.4.x",
+    "immutable": "^3.0.x",
     "nuclear-react-mixin": "^2.0.0",
     "lodash": "^2.4.1",
     "uuid": "^2.0.1",

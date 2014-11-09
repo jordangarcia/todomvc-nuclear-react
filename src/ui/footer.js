@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 var React = require('react')
 var Filters = require('./filters')
+var reactor = require('../nuclear/reactor')
 
 module.exports = React.createClass({
 
@@ -8,7 +9,7 @@ module.exports = React.createClass({
    * Removes all completed items
    */
   clearCompleted() {
-    reactor.action('todo').deleteCompleted()
+    reactor.actions('todo').deleteCompleted()
   },
 
   render() {

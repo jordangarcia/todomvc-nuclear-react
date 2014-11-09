@@ -20,7 +20,7 @@ if (stateToLoad) {
 
 // add hashchange listener
 window.addEventListener('hashchange', (e) => {
-  reactor.action('todo').parseHash(window.location.hash)
+  reactor.actions('todo').parseHash(window.location.hash)
 })
 
 // ensure a valid hash when loading the page

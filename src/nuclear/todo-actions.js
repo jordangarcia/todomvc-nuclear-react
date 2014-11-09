@@ -39,9 +39,7 @@ exports.updateItemTitle = function(reactor, id, newTitle) {
 }
 
 exports.setEditingItem = function(reactor, item) {
-  reactor.dispatch(Const.SET_EDITING_ITEM, {
-    id: item.id,
-  })
+  reactor.dispatch(Const.SET_EDITING_ITEM, item.id)
 }
 
 exports.clearEditingItem = function(reactor) {
@@ -61,9 +59,7 @@ exports.filter = function(reactor, val) {
     console.warn('invalid filter', val)
     val = DEFAULT_FILTER
   }
-  reactor.dispatch(Const.SET_COMPLETED_FILTER, {
-    value: val
-  })
+  reactor.dispatch(Const.SET_COMPLETED_FILTER, val)
 }
 
 /**

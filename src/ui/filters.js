@@ -12,7 +12,7 @@ module.exports = React.createClass({
    * Set the filter value (all|active|completed)
    */
   filter(val) {
-    reactor.action('todo').filter(val)
+    reactor.actions('todo').filter(val)
   },
 
   render() {

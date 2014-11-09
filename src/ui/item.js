@@ -24,21 +24,21 @@ module.exports = React.createClass({
    * Removes the current item
    */
   delete() {
-    reactor.action('todo').deleteItem(this.props.item)
+    reactor.actions('todo').deleteItem(this.props.item)
   },
 
   /**
    * Toggles the item's isComplete attribute
    */
   toggleComplete() {
-    reactor.action('todo').toggleItem(this.props.item)
+    reactor.actions('todo').toggleItem(this.props.item)
   },
 
   /**
    * Updates app state to set the current editing item
    */
   setEditing() {
-    reactor.action('todo').setEditingItem(this.props.item)
+    reactor.actions('todo').setEditingItem(this.props.item)
   },
 
   /**
@@ -47,13 +47,13 @@ module.exports = React.createClass({
    */
   handleEdit(e) {
     if (e.keyCode === ENTER_KEY) {
-      reactor.action('todo').updateItemTitle(
+      reactor.actions('todo').updateItemTitle(
         this.props.item.id,
         this.state.editingValue
       )
-      reactor.action('todo').clearEditingItem()
+      reactor.actions('todo').clearEditingItem()
     } else if (e.keyCode === ESCAPE_KEY) {
-      reactor.action('todo').clearEditingItem()
+      reactor.actions('todo').clearEditingItem()
     }
   },
 

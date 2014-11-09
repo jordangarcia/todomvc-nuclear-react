@@ -26,9 +26,9 @@ module.exports = React.createClass({
   getDataBindings() {
     return {
       'items': 'filteredItems',
-      'active': 'items.active',
+      'activeItems': 'activeItems',
       'filterValue': 'filter',
-      'areAllChecked': 'items.areAllChecked',
+      'areAllChecked': 'areAllChecked',
       'editingId': 'editingId',
     }
   },
@@ -36,7 +36,7 @@ module.exports = React.createClass({
   render() {
     // items is immutable at this point, coerce to plain JS Array
     var items = this.state.items.toJS()
-    var numActive = this.state.items.toJS().length
+    var numActive = this.state.activeItems.toJS().length
     var numCompleted = items.length - numActive
 
     return (

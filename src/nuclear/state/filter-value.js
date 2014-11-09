@@ -1,10 +1,10 @@
 var Nuclear = require('nuclear-js')
-var Const = require('./constants')
+var Const = require('../constants')
 
 /**
  * Filter core updates all filtering state
  */
-module.exports = Nuclear.createCore({
+module.exports = Nuclear.ReactiveState({
   getInitialState() {
     return 'all'
   },
@@ -14,6 +14,6 @@ module.exports = Nuclear.createCore({
   }
 })
 
-function setFilter(state, payload) {
-  return payload.value
+function setFilter(state, value) {
+  return value
 }

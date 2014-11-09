@@ -7,7 +7,7 @@ module.exports = React.createClass({
   addItem(e) {
     e.preventDefault()
     var input = e.target.querySelector('input')
-    reactor.action('todo').addItem(input.value)
+    reactor.actions('todo').addItem(input.value)
     input.value = ''
   },
 
