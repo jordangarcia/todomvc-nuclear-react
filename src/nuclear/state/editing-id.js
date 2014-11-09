@@ -21,5 +21,4 @@ function clearEditingItem(state)  {
 
 function setEditing(state, id) {
   return id
-  return payload.id
 }
